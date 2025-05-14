@@ -8,8 +8,8 @@
 		trow,
 		tfoot,
 		rowHeight = 40,
-		start = $bindable(0),
-		end = $bindable(10),
+		start = $bindable(0),//TODO: Fix the numbers
+		end = $bindable(10),//TODO: Fix the numbers
 		// ...props
 	} = $props();
 
@@ -109,6 +109,8 @@
 				<tr class="top">
 					<td colspan="5" class="spacer-cell">
 						<div style="height: {start * rowHeight}px;"></div>
+						<!-- <div style="height: {viewport ? viewport.scrollTop : 0}px;"></div> -->
+						<!-- <div style="height: {Math.round(viewport ? viewport.scrollTop : 0)}px;"></div> -->
 					</td>
 				</tr>
 			{/if}
@@ -175,6 +177,7 @@
 		padding: 8px;
 		text-align: left;
 	}
+
 	/* Spacer cells, minimal styling, letting the inner <div> set the correct height. */
 	.spacer-cell {
 		padding: 0;

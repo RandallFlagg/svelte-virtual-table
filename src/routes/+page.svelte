@@ -62,13 +62,22 @@ Filter:
 	<div class="virtual-table-demo">
 		<VirtualTable items={filteredList} className="test1 test2" bind:start bind:end>
 			{#snippet thead()}
-				<tr>
-					<th data-sort="title">Title</th>
-					<th data-sort="user">User</th>
-					<th data-sort="domain">Domain</th>
-					<th data-sort="time" data-sort-initial="descending">Time ago</th>
-					<th data-sort="comments_count">Comments</th>
-				</tr>
+				<!-- <colgroup>
+					<col class="col" />
+					<col class="col" />
+					<col class="col" />
+					<col class="col" />
+					<col class="col" />
+				</colgroup> -->
+				<thead class="sticky-header">
+					<tr>
+						<th data-sort="title">Title</th>
+						<th data-sort="user">User</th>
+						<th data-sort="domain">Domain</th>
+						<th data-sort="time" data-sort-initial="descending">Time ago</th>
+						<th data-sort="comments_count">Comments</th>
+					</tr>
+				</thead>
 			{/snippet}
 			{#snippet trow(item, index, rowHeight)}
 				<tr class="tr" style="height: {rowHeight}px;">
@@ -146,6 +155,17 @@ Filter:
 		/* Remove margins if they interfere with available space */
 		/* margin: 20px 0; */
 	}
+
+	/* .col{
+		width: 100px;
+	} */
+
+	.sticky-header {
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 10;
+    }
 
 	/* :global(body) {
 		background-color: white;
