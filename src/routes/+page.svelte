@@ -60,7 +60,7 @@ Filter:
 	<h3>Without border-collapse:</h3>
 	<p>Start: {start}, end: {end}</p>
 	<div class="virtual-table-demo">
-		<VirtualTable items={filteredList} className="test1 test2" bind:start bind:end>
+		<VirtualTable items={filteredList} className="test1 test2" rowHeight="40" bind:start bind:end>
 			{#snippet thead()}
 				<!-- <colgroup>
 					<col class="col" />
@@ -149,7 +149,7 @@ Filter:
 		/* display: flex;
 		flex-direction: column; */
 		/* Define an explicit height; you can adjust this value as needed */
-		height: 400px;
+		height: 480px; /*This should be a multiplaction of the rowheight in px */
 		/* Alternatively, set both height and max-height if you want a cap: */
 		/* max-height: 50vh; */
 		/* Remove margins if they interfere with available space */
@@ -161,11 +161,27 @@ Filter:
 	} */
 
 	.sticky-header {
-        position: sticky;
-        top: 0;
-        background: white;
-        z-index: 10;
-    }
+		background: #f5f5f5;
+		border: none;
+		box-shadow: inset 0 -1px 0 0 #ccc;
+		height: 40px; /* or use rowHeight */
+		position: sticky;
+		top: 0;
+		z-index: 10;
+	}
+
+	/* Header styles – parent can also add class="sticky-header" in its own snippet */
+	/* Use a box-shadow to simulate a consistent vertical border */
+	/* Height is the same as rowHeight. TODO: Check if this can be removed. */
+	thead th {
+		border: none;
+		box-shadow: inset 1px 0 0 0 #ccc, inset -1px 0 0 0 #ccc;
+		font-size: 14px;
+		height: 40px; 
+		line-height: 40px;
+		padding: 0 8px;
+		text-align: left;
+	}
 
 	/* :global(body) {
 		background-color: white;
