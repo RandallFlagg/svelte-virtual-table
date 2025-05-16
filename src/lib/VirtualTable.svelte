@@ -1,23 +1,25 @@
 <script>
-	// Assume items is an array of your 120 items.
-	// For testing purposes, you can create a dummy array:
-	// let items = $state(Array.from({ length: 120 }, (_, i) => ({ id: i, data: `Item ${i}` })));
+	// Destructure incoming props with defaults.
 	let {
 		items,
-		thead,
-		tableClass,
-		tbodyClass,
-		trow,
-		tfoot,
-		rowHeight = 40,
-		headerHeight = 40,
-		// 'start' and 'end' represent the first and last visible row indices (inclusive)
-		start = $bindable(0), //TODO: Fix the numbers
-		end = $bindable(10) //TODO: Fix the numbers
+		thead, // Function or fragment for rendering the table header.
+		tableClass, // Additional class for the table.
+		tbodyClass, // Additional class for the tbody.
+		trow, // Function or fragment for rendering a table row.
+		tfoot, // Function or fragment for rendering the table footer.
+		rowHeight = 40, // Height (in pixels) for each data row.
+		headerHeight = 40, // Height (in pixels) for the header row.
+		// 'start' and 'end' are the indices of the first/last visible rows (inclusive).
+		start = $bindable(0),
+		end = $bindable(0)
 	} = $props();
-	console.log('rowHeight', rowHeight);
-	console.log('LENGTH: ', items.length);
-	console.log('headerHeight', headerHeight);
+
+	console.log('rowHeight:', rowHeight);
+	console.log('headerHeight:', headerHeight);
+	console.log('Total items:', items.length);
+
+	// For testing purposes, you can create a dummy array of 120 items:
+	// let items = $state(Array.from({ length: 120 }, (_, i) => ({ id: i, data: `Item ${i}` })));
 
 	// Virtualization state variables.
 	// 'viewport' is a reference to the scroll container (<svelte-virtual-table-viewport>),
@@ -26,22 +28,22 @@
 	let viewportHeight = $state(0);
 	let scrollOffset = $state(0); // Fractional scroll remainder for smooth scrolling
 
-	// Compute the number of fully visible data rows (excluding the header).
-	// Using Math.max prevents negative values when viewportHeight is small.
-	// Alternate testing: use Math.ceil(viewportHeight / rowHeight) instead of Math.floor.
+	// Determine how many full data rows are visible  (excluding the header).
+	// Math.max ensures no negative value when viewportHeight is small.
+	// Alternate testing: try Math.ceil(viewportHeight / rowHeight) instead of Math.floor.
 	// const visibleCount = $derived(Math.ceil(viewportHeight / rowHeight));
 	const visibleCount = $derived(Math.floor(Math.max(0, viewportHeight - headerHeight) / rowHeight));
 
-	// Compute the visible rows slice from the items array.
+	// Get the visible rows from the items array.
 	// Since 'end' is inclusive, slice from start to (end + 1).
 	const visible = $derived(items.slice(start, end + 1));
 
-	// Reactively update 'start' and 'end' when viewport dimensions change.
+	// Reactively update 'start' and 'end' when the viewport dimensions or item count change.
 	$effect(() => {
 		console.log('Enter effect');
 		if (items.length > 0) {
 			console.log('effect: items.length: ', items.length);
-			// Ensure 'start' is clamped to leave room for visibleCount rows.
+			// Ensure 'start' is clamped to leave room for visible rows.
 			start = Math.min(start, Math.max(0, items.length - visibleCount));
 			// Set 'end' so that exactly visibleCount rows are displayed (or as many remain).
 			end = Math.min(start + visibleCount - 1, items.length - 1);
@@ -49,24 +51,25 @@
 			start = 0;
 			end = 0;
 		}
-		console.log('Exit effect', start, end);
+		console.log('Exit effect: start =', start, ', end =', end);
 	});
 
+	// Debug effect to log current virtualization state.
 	$effect(() => {
-		console.log('Visible rows:', visible);
-		console.log('Visible Count:', visibleCount);
-		console.log('viewportHeight:', viewportHeight);
+		console.log('Updated Visible rows:', visible);
+		console.log('Updated Visible Count:', visibleCount);
+		console.log('Updated viewportHeight:', viewportHeight);
 		console.log('Updated rowHeight:', rowHeight);
 		console.log('Updated headerHeight:', headerHeight);
 	});
 
-	// Scroll handler recalculates start, end, and scrollOffset based on the scroll position.
+	// Scroll handler recalculates/updates start, end, and scrollOffset based on the scroll position.
 	function handleScroll() {
 		console.log('HandleScroll Enter');
 		const scrollTop = viewport.scrollTop;
 		// Calculate the new start index
 		const calcNewStart = Math.floor(scrollTop / rowHeight);
-		// Clamp newStart so there’s room for visibleCount rows.
+		// Clamp newStart so that there's room for visibleCount rows.
 		const newStart = Math.min(calcNewStart, Math.max(0, items.length - visibleCount));
 		// Calculate the new end index
 		const calcNewEnd = newStart + visibleCount - 1;
@@ -90,12 +93,12 @@
 	bind:offsetHeight={viewportHeight}
 >
 	<table class="table {tableClass}">
-		<!-- Optional: A parent can provide a <colgroup> via its own snippet if needed -->
-		<!-- Render the header (and optionally <colgroup>) using the parent's snippet -->
+		<!-- Render the table header.
+             The parent may optionally supply a <colgroup> as part of the header snippet. -->
 		{@render thead?.(headerHeight)}
 
-		<!-- The tbody uses a transform for smooth fractional scroll.
-             Spacer rows position the visible content accurately. -->
+		<!-- The tbody applies a translateY transform for smooth fractional scrolling.
+             Spacer rows ensure the visible content is correctly positioned. -->
 		<tbody
 			class="tbody {tbodyClass}"
 			style="transform: translateY(-{scrollOffset}px); --vt-row-height: {rowHeight}px;"
@@ -151,7 +154,7 @@
 		table-layout: fixed;
 	}
 
-	/* Spacer cells: no padding, margin, or border */
+	/* Spacer cells: remove default padding, margin, and border. */
 	.spacer-cell {
 		padding: 0;
 		margin: 0;
