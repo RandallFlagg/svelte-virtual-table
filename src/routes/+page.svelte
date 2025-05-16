@@ -60,8 +60,17 @@ Filter:
 	<h3>Without border-collapse:</h3>
 	<p>Start: {start}, end: {end}</p>
 	<div class="virtual-table-demo">
-		<VirtualTable items={filteredList} className="test1 test2" rowHeight="40" bind:start bind:end>
-			{#snippet thead()}
+		<VirtualTable
+			items={filteredList}
+			className="test1 test2"
+			rowHeight="40"
+			headerHeight="40"
+			tableClass="collapse"
+			tbodyClass="tbodyStyle"
+			bind:start
+			bind:end
+		>
+			{#snippet thead(headerHeight)}
 				<!-- <colgroup>
 					<col class="col" />
 					<col class="col" />
@@ -71,11 +80,23 @@ Filter:
 				</colgroup> -->
 				<thead class="sticky-header">
 					<tr>
-						<th data-sort="title">Title</th>
-						<th data-sort="user">User</th>
-						<th data-sort="domain">Domain</th>
-						<th data-sort="time" data-sort-initial="descending">Time ago</th>
-						<th data-sort="comments_count">Comments</th>
+						<th data-sort="title" style="height: {headerHeight}px; line-height: {headerHeight}px;"
+							>Title</th
+						>
+						<th data-sort="user" style="height: {headerHeight}px; line-height: {headerHeight}px;">User</th
+						>
+						<th data-sort="domain" style="height: {headerHeight}px; line-height: {headerHeight}px;"
+							>Domain</th
+						>
+						<th
+							data-sort="time"
+							data-sort-initial="descending"
+							style="height: {headerHeight}px; line-height: {headerHeight}px;">Time ago</th
+						>
+						<th
+							data-sort="comments_count"
+							style="height: {headerHeight}px; line-height: {headerHeight}px;">Comments</th
+						>
 					</tr>
 				</thead>
 			{/snippet}
@@ -145,11 +166,21 @@ Filter:
 		padding: 0;
 	} */
 
+	/* TODO: This should be passed to the table in the component */
+	.collapse {
+		border-collapse: collapse;
+	}
+
+	/* TODO: This should be passed to the tbody in the component */
+	.tbodyStyle {
+		background-color: blue;
+	}
+
 	.virtual-table-demo {
 		/* display: flex;
 		flex-direction: column; */
 		/* Define an explicit height; you can adjust this value as needed */
-		height: 480px; /*This should be a multiplaction of the rowheight in px */
+		height: 520px; /*This should be a multiplaction of the rowheight in px */
 		/* Alternatively, set both height and max-height if you want a cap: */
 		/* max-height: 50vh; */
 		/* Remove margins if they interfere with available space */
@@ -175,10 +206,12 @@ Filter:
 	/* Height is the same as rowHeight. TODO: Check if this can be removed. */
 	thead th {
 		border: none;
-		box-shadow: inset 1px 0 0 0 #ccc, inset -1px 0 0 0 #ccc;
+		box-shadow:
+			inset 1px 0 0 0 #ccc,
+			inset -1px 0 0 0 #ccc;
 		font-size: 14px;
-		height: 40px; 
-		line-height: 40px;
+		/* height: 40px; 
+		line-height: 40px; */
 		padding: 0 8px;
 		text-align: left;
 	}
