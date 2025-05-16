@@ -147,7 +147,7 @@
 	/* Table styling: fixed layout preserves column widths */
 	table {
 		width: 100%;
-		/* border-collapse: collapse; */
+		border-collapse: collapse;
 		table-layout: fixed;
 	}
 
